@@ -30,8 +30,19 @@ func (h *userHandler) UserRegistration(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	newUser := h.userService.CreateUser(*req)
+	existEmail := h.userService.CheckExistEmail(*req)
+	if existEmail != nil {
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "invalid request", existEmail.Error())
+		return c.JSON(http.StatusBadRequest, response)
+	}
 
+	newUser, err := h.userService.CreateUser(*req)
+	if err != nil {
+		errors := helper.ErrorFormatter(err)
+		errMessage := helper.M{"errors": errors}
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "failed", errMessage)
+		return c.JSON(http.StatusBadRequest, response)
+	}
 	userData := UserResponseFormatter(newUser)
 
 	response := helper.ResponseFormatter(http.StatusOK, "success", "succes user", userData)
