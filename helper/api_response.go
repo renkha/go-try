@@ -32,8 +32,10 @@ func ResponseFormatter(code int, status string, message interface{}, data interf
 
 func ErrorFormatter(err error) []string {
 	var errors []string
-	for _, e := range err.(validator.ValidationErrors) {
-		errors = append(errors, e.Error())
+	if ev, ok := err.(validator.ValidationErrors); ok {
+		for _, e := range ev {
+			errors = append(errors, e.Error())
+		}
 	}
 
 	return errors
