@@ -1,2 +1,3 @@
 # go-try
-rest-api
+
+Learning how to make RestAPI with Go Languages.
